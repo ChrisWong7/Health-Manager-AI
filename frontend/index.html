@@ -26,10 +26,13 @@
             const messagesEndRef = useRef(null);
 
             useEffect(() => {
-                // Try to detect backend URL based on how the page is opened
-                const backendUrl = window.location.port === '8000' 
-                    ? '' // If served from port 8000, use relative path
-                    : 'http://localhost:8000';
+                // Determine backend URL: 
+                // If the page is opened from localhost, default to port 8000
+                // If the page is opened from Render, use the same origin (empty string)
+                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                const backendUrl = isLocal 
+                    ? (window.location.port === '8000' ? '' : 'http://localhost:8000')
+                    : ''; 
                 
                 fetch(`${backendUrl}/`)
                     .then(res => res.json())
@@ -65,9 +68,10 @@
                 }]);
 
                 try {
-                    const backendUrl = window.location.port === '8000' 
-                        ? '/api/v1/stream_query' 
-                        : 'http://localhost:8000/api/v1/stream_query';
+                    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                    const backendUrl = isLocal 
+                        ? (window.location.port === '8000' ? '/api/v1/stream_query' : 'http://localhost:8000/api/v1/stream_query')
+                        : '/api/v1/stream_query';
 
                     const response = await fetch(backendUrl, {
                         method: 'POST',

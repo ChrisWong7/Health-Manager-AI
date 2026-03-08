@@ -11,7 +11,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# lib/  <-- 注释掉这行，或者明确允许 frontend/lib
 lib64/
 parts/
 sdist/
@@ -20,6 +20,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+!frontend/lib/
 
 # Virtual Environment
 venv/
