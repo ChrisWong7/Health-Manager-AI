@@ -36,7 +36,7 @@ class HealthCheck(BaseModel):
     status: str
     version: str
 
-@app.get("/", response_model=HealthCheck)
+@app.get("/")
 async def root():
     # 优先尝试返回前端页面
     index_path = frontend_dir / "index.html"
