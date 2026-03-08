@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import Optional
 from app.api.endpoints import router as api_router
 import os
+from pathlib import Path
 
 app = FastAPI(
     title="Health Manager API",
@@ -21,10 +23,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 获取前端目录路径
-frontend_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend")
-if os.path.exists(frontend_dir):
-    app.mount("/static", StaticFiles(directory=frontend_dir), name="static")
+# 获取前端目录路径 (使用更健壮的 Pathlib)
+BASE_DIR = Path(__file__).resolve().parent.parent
+frontend_dir = BASE_DIR / "frontend"
+
+if frontend_dir.exists():
+    app.mount("/static", StaticFiles(directory=str(frontend_dir)), name="static")
 
 app.include_router(api_router, prefix="/api/v1")
 
@@ -34,6 +38,11 @@ class HealthCheck(BaseModel):
 
 @app.get("/", response_model=HealthCheck)
 async def root():
+    # 优先尝试返回前端页面
+    index_path = frontend_dir / "index.html"
+    if index_path.exists():
+        return FileResponse(str(index_path))
+    
     return {
         "status": "online",
         "version": "1.0.0"
