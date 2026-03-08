@@ -42,10 +42,5 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Docker
-.dockerignore
-Dockerfile
-render.yaml
-
 # Project Specific
-backend/simple_vector_store.pkl
+# backend/simple_vector_store.pkl
